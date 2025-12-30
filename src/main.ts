@@ -575,15 +575,19 @@ eachJanInput.addEventListener("keydown", (event) => {
   }
 });
 
-await store.init();
-const storedMaster = store.getMasterData();
-masterCache = storedMaster.mapping;
-masterNameCache = storedMaster.names;
-masterMapInput.value = masterMapToText(masterCache);
-if (Object.keys(masterCache).length > 0) {
-  masterCsvStatus.textContent = `マスタ読み込み済み: ${Object.keys(masterCache).length} 件`;
+async function initApp(): Promise<void> {
+  await store.init();
+  const storedMaster = store.getMasterData();
+  masterCache = storedMaster.mapping;
+  masterNameCache = storedMaster.names;
+  masterMapInput.value = masterMapToText(masterCache);
+  if (Object.keys(masterCache).length > 0) {
+    masterCsvStatus.textContent = `マスタ読み込み済み: ${Object.keys(masterCache).length} 件`;
+  }
+  setMasterHidden(Object.keys(masterCache).length > 0);
+  await loadMasterFromServer(false);
+  renderLists();
 }
-setMasterHidden(Object.keys(masterCache).length > 0);
-await loadMasterFromServer(false);
-renderLists();
+
+void initApp();
 
