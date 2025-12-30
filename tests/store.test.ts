@@ -35,29 +35,29 @@ describe("AppStore", () => {
     const store = new AppStore();
 
     store.handleScan("A", 1000, { A: "CASE-A" });
-    store.setMasterMapping({ A: "CASE-A" });
+    store.setMasterData({ mapping: { A: "CASE-A" }, names: {} });
     store.resetAll();
 
     expect(store.getPickList()).toEqual([]);
-    expect(store.getMasterMapping()).toEqual({});
+    expect(store.getMasterData()).toEqual({ mapping: {}, names: {} });
   });
 
   it("debounces persistence by 500ms on changes", async () => {
     vi.useFakeTimers();
     const calls: { master: number; state: number } = { master: 0, state: 0 };
     const storage = {
-      loadMaster: async () => ({}),
+      loadMaster: async () => ({ mapping: {}, names: {} }),
       saveMaster: async () => {
         calls.master += 1;
       },
-      loadState: async () => ({ counts: {}, lastScanAt: {} }),
+      loadState: async () => ({ counts: {}, lastScanAt: {}, completed: [] }),
       saveState: async () => {
         calls.state += 1;
       }
     };
     const store = new AppStore({ storage });
 
-    store.setMasterMapping({ "111": "CASE-1" });
+    store.setMasterData({ mapping: { "111": "CASE-1" }, names: {} });
     store.handleScan("111", 1000, { "111": "CASE-1" });
     store.adjust("CASE-1", 1);
 

@@ -45,7 +45,8 @@ export class AppStore {
       const { [pickJan]: _, ...rest } = this.state.counts;
       this.state = {
         counts: rest,
-        lastScanAt: this.state.lastScanAt
+        lastScanAt: this.state.lastScanAt,
+        completed: this.state.completed
       };
       this.scheduleSave();
       return;
@@ -56,7 +57,8 @@ export class AppStore {
         ...this.state.counts,
         [pickJan]: next
       },
-      lastScanAt: this.state.lastScanAt
+      lastScanAt: this.state.lastScanAt,
+      completed: this.state.completed
     };
     this.scheduleSave();
   }

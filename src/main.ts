@@ -76,48 +76,25 @@ app.innerHTML = `
   </section>
 `;
 
-const eachJanInput = app.querySelector<HTMLInputElement>("#eachJan");
-const batchQtyInput = app.querySelector<HTMLInputElement>("#batchQty");
-const addOneButton = app.querySelector<HTMLButtonElement>("#addOne");
-const addBatchButton = app.querySelector<HTMLButtonElement>("#addBatch");
-const masterMapInput = app.querySelector<HTMLTextAreaElement>("#masterMap");
-const masterCsvFileInput = app.querySelector<HTMLInputElement>("#masterCsvFile");
-const loadMasterCsvButton = app.querySelector<HTMLButtonElement>("#loadMasterCsv");
-const loadMasterServerButton = app.querySelector<HTMLButtonElement>("#loadMasterServer");
-const masterCsvStatus = app.querySelector<HTMLDivElement>("#masterCsvStatus");
-const masterToggleButton = app.querySelector<HTMLButtonElement>("#toggleMaster");
-const masterBody = app.querySelector<HTMLDivElement>("#masterBody");
-const masterUpdatedAt = app.querySelector<HTMLDivElement>("#masterUpdatedAt");
-const pickListEl = app.querySelector<HTMLDivElement>("#pickList");
-const completedListEl = app.querySelector<HTMLDivElement>("#completedList");
-const resetButton = app.querySelector<HTMLButtonElement>("#resetAll");
-const cameraStartButton = app.querySelector<HTMLButtonElement>("#cameraStart");
-const cameraStopButton = app.querySelector<HTMLButtonElement>("#cameraStop");
-const cameraPreview = app.querySelector<HTMLVideoElement>("#cameraPreview");
+const eachJanInput = app.querySelector<HTMLInputElement>("#eachJan")!;
+const batchQtyInput = app.querySelector<HTMLInputElement>("#batchQty")!;
+const addOneButton = app.querySelector<HTMLButtonElement>("#addOne")!;
+const addBatchButton = app.querySelector<HTMLButtonElement>("#addBatch")!;
+const masterMapInput = app.querySelector<HTMLTextAreaElement>("#masterMap")!;
+const masterCsvFileInput = app.querySelector<HTMLInputElement>("#masterCsvFile")!;
+const loadMasterCsvButton = app.querySelector<HTMLButtonElement>("#loadMasterCsv")!;
+const loadMasterServerButton = app.querySelector<HTMLButtonElement>("#loadMasterServer")!;
+const masterCsvStatus = app.querySelector<HTMLDivElement>("#masterCsvStatus")!;
+const masterToggleButton = app.querySelector<HTMLButtonElement>("#toggleMaster")!;
+const masterBody = app.querySelector<HTMLDivElement>("#masterBody")!;
+const masterUpdatedAt = app.querySelector<HTMLDivElement>("#masterUpdatedAt")!;
+const pickListEl = app.querySelector<HTMLDivElement>("#pickList")!;
+const completedListEl = app.querySelector<HTMLDivElement>("#completedList")!;
+const resetButton = app.querySelector<HTMLButtonElement>("#resetAll")!;
+const cameraStartButton = app.querySelector<HTMLButtonElement>("#cameraStart")!;
+const cameraStopButton = app.querySelector<HTMLButtonElement>("#cameraStop")!;
+const cameraPreview = app.querySelector<HTMLVideoElement>("#cameraPreview")!;
 const cameraGuide = app.querySelector<HTMLDivElement>(".camera-guide");
-
-if (
-  !eachJanInput ||
-  !batchQtyInput ||
-  !addOneButton ||
-  !addBatchButton ||
-  !masterMapInput ||
-  !masterCsvFileInput ||
-  !loadMasterCsvButton ||
-  !loadMasterServerButton ||
-  !masterCsvStatus ||
-  !masterToggleButton ||
-  !masterBody ||
-  !masterUpdatedAt ||
-  !pickListEl ||
-  !completedListEl ||
-  !resetButton ||
-  !cameraStartButton ||
-  !cameraStopButton ||
-  !cameraPreview
-) {
-  throw new Error("Missing UI elements");
-}
 
 const cameraScanner = new CameraScanner(cameraPreview);
 let masterCache: Record<string, string> = {};
@@ -370,34 +347,36 @@ function renderPickList(
     })
     .join("");
 
-  for (const button of pickListEl.querySelectorAll<HTMLButtonElement>(
-    "button[data-adjust]"
-  )) {
-    button.addEventListener("click", () => {
-      const delta = Number(button.dataset.adjust ?? "0");
-      const row = button.closest<HTMLDivElement>(".pick-item");
-      const pickJan = row?.dataset.pickJan;
-      if (!pickJan || !delta) {
-        return;
-      }
-      store.adjust(pickJan, delta);
-      renderLists();
+  pickListEl
+    .querySelectorAll("button[data-adjust]")
+    .forEach((button) => {
+      const btn = button as HTMLButtonElement;
+      btn.addEventListener("click", () => {
+        const delta = Number(btn.dataset.adjust ?? "0");
+        const row = btn.closest<HTMLDivElement>(".pick-item");
+        const pickJan = row?.dataset.pickJan;
+        if (!pickJan || !delta) {
+          return;
+        }
+        store.adjust(pickJan, delta);
+        renderLists();
+      });
     });
-  }
 
-  for (const button of pickListEl.querySelectorAll<HTMLButtonElement>(
-    "button[data-complete]"
-  )) {
-    button.addEventListener("click", () => {
-      const row = button.closest<HTMLDivElement>(".pick-item");
-      const pickJan = row?.dataset.pickJan;
-      if (!pickJan) {
-        return;
-      }
-      store.completePick(pickJan, Date.now());
-      renderLists();
+  pickListEl
+    .querySelectorAll("button[data-complete]")
+    .forEach((button) => {
+      const btn = button as HTMLButtonElement;
+      btn.addEventListener("click", () => {
+        const row = btn.closest<HTMLDivElement>(".pick-item");
+        const pickJan = row?.dataset.pickJan;
+        if (!pickJan) {
+          return;
+        }
+        store.completePick(pickJan, Date.now());
+        renderLists();
+      });
     });
-  }
 }
 
 function renderCompletedList(nameByPickJan: Map<string, string>): void {
@@ -427,19 +406,20 @@ function renderCompletedList(nameByPickJan: Map<string, string>): void {
     })
     .join("");
 
-  for (const button of completedListEl.querySelectorAll<HTMLButtonElement>(
-    "button[data-restore]"
-  )) {
-    button.addEventListener("click", () => {
-      const row = button.closest<HTMLDivElement>(".pick-item");
-      const pickJan = row?.dataset.pickJan;
-      if (!pickJan) {
-        return;
-      }
-      store.restorePick(pickJan);
-      renderLists();
+  completedListEl
+    .querySelectorAll("button[data-restore]")
+    .forEach((button) => {
+      const btn = button as HTMLButtonElement;
+      btn.addEventListener("click", () => {
+        const row = btn.closest<HTMLDivElement>(".pick-item");
+        const pickJan = row?.dataset.pickJan;
+        if (!pickJan) {
+          return;
+        }
+        store.restorePick(pickJan);
+        renderLists();
+      });
     });
-  }
 }
 
 function renderLists(): void {

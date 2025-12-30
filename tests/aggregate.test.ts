@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { applyScan, ScanState } from "../src/domain/aggregate";
 
-const emptyState: ScanState = { counts: {}, lastScanAt: {} };
+const emptyState: ScanState = { counts: {}, lastScanAt: {}, completed: [] };
 
 describe("applyScan", () => {
   it("increments default +1 on accepted scans", () => {

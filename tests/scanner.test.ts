@@ -19,7 +19,7 @@ describe("FakeScanner", () => {
   it("can drive domain applyScan from emitted codes", () => {
     const fake = new FakeScanner(["A", "A", "B"]);
     const master = { A: "CASE-A" };
-    let state: ScanState = { counts: {}, lastScanAt: {} };
+    let state: ScanState = { counts: {}, lastScanAt: {}, completed: [] };
     const times = [1000, 1500, 3000];
 
     fake.start((code) => {

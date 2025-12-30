@@ -20,7 +20,7 @@ beforeEach(async () => {
 describe("IndexedDbStorage", () => {
   it("saves and loads master mapping", async () => {
     const storage = new IndexedDbStorage(dbName);
-    const master = { "111": "CASE-1", "222": "CASE-2" };
+    const master = { mapping: { "111": "CASE-1", "222": "CASE-2" }, names: {} };
 
     await storage.saveMaster(master);
     const loaded = await storage.loadMaster();
@@ -30,7 +30,7 @@ describe("IndexedDbStorage", () => {
 
   it("saves and loads scan state", async () => {
     const storage = new IndexedDbStorage(dbName);
-    const state = { counts: { A: 2 }, lastScanAt: { A: 1000 } };
+    const state = { counts: { A: 2 }, lastScanAt: { A: 1000 }, completed: [] };
 
     await storage.saveState(state);
     const loaded = await storage.loadState();
