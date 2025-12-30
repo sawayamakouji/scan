@@ -1,3 +1,12 @@
+// vite.config.ts
 import { defineConfig } from "vite";
 
-export default defineConfig({});
+export default defineConfig({
+  server: {
+    host: true,
+    allowedHosts: [".trycloudflare.com"],
+  },
+  preview: {
+    allowedHosts: [".trycloudflare.com"],
+  },
+});

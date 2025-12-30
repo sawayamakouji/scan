@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>マスタ管理</title>
+    <style>
+      :root {
+        font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        color: #111;
+        background: #f6f5f2;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid #e4e1dc;
+        border-radius: 12px;
+        padding: 20px;
+        display: grid;
+        gap: 16px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      input,
+      button {
+        font: inherit;
+      }
+      input[type="password"],
+      input[type="file"] {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      input[type="password"] {
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #cfcac2;
+      }
+      button {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #cfcac2;
+        background: #f2ede6;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .status {
+        font-size: 13px;
+        color: #5c5147;
+      }
+      .status.error {
+        color: #c0392b;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>マスタCSVアップロード</h1>
+      <div>
+        <label for="password">管理パスワード</label>
+        <input id="password" type="password" autocomplete="current-password" />
+      </div>
+      <div>
+        <label for="csvFile">CSVファイル (each-to-case.csv)</label>
+        <input id="csvFile" type="file" accept=".csv,text/csv" />
+      </div>
+      <button id="upload">アップロード</button>
+      <div id="status" class="status"></div>
+    </main>
+
+    <script>
+      const uploadButton = document.getElementById("upload");
+      const passwordInput = document.getElementById("password");
+      const fileInput = document.getElementById("csvFile");
+      const statusEl = document.getElementById("status");
+
+      function setStatus(message, isError) {
+        statusEl.textContent = message;
+        statusEl.classList.toggle("error", Boolean(isError));
+      }
+
+      uploadButton.addEventListener("click", async () => {
+        const password = passwordInput.value.trim();
+        const file = fileInput.files && fileInput.files[0];
+        if (!password) {
+          setStatus("管理パスワードを入力してください。", true);
+          return;
+        }
+        if (!file) {
+          setStatus("CSVファイルを選択してください。", true);
+          return;
+        }
+        uploadButton.disabled = true;
+        setStatus("アップロード中です...");
+        const formData = new FormData();
+        formData.append("password", password);
+        formData.append("file", file);
+        try {
+          const response = await fetch("/api/admin/master", {
+            method: "POST",
+            body: formData
+          });
+          if (!response.ok) {
+            throw new Error(await response.text());
+          }
+          const data = await response.json();
+          if (data && data.updatedAt) {
+            const when = new Date(data.updatedAt);
+            const label = isNaN(when.getTime()) ? data.updatedAt : when.toLocaleString();
+            setStatus(`アップロードが完了しました。更新日時: ${label}`);
+          } else {
+            setStatus("アップロードが完了しました。");
+          }
+          fileInput.value = "";
+        } catch (error) {
+          setStatus(`失敗しました: ${error.message ?? String(error)}`, true);
+        } finally {
+          uploadButton.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -3,6 +3,13 @@ import { JanMaster, mapPickJan } from "./mapPickJan";
 export type ScanState = {
   counts: Record<string, number>;
   lastScanAt: Record<string, number>;
+  completed: CompletedItem[];
+};
+
+export type CompletedItem = {
+  pickJan: string;
+  qty: number;
+  completedAt: number;
 };
 
 export function applyScan(
@@ -27,6 +34,7 @@ export function applyScan(
     lastScanAt: {
       ...state.lastScanAt,
       [pickJan]: nowMs
-    }
+    },
+    completed: state.completed
   };
 }
